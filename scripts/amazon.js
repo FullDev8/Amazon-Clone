@@ -26,7 +26,7 @@ products.forEach((product) => {
       </div>
 
       <div class="product-quantity-container">
-        <select class="js-quantity-selector-${product.id}" data-testid="quantity-selector">
+        <select class="js-quantity-selector-${product.id}" data-test-id="${product.id}">
           <option selected value="1">1</option>
           <option value="2">2</option>
           <option value="3">3</option>
@@ -42,7 +42,7 @@ products.forEach((product) => {
 
       <div class="product-spacer"></div>
 
-      <div class="added-to-cart">
+      <div class="added-to-cart added-message-${product.id}" data-test-id="${product.id}">
         <img src="images/icons/checkmark.png">
         Added
       </div>
@@ -56,14 +56,14 @@ products.forEach((product) => {
 
 document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
+// Controller
 document.querySelectorAll('.js-add-to-cart')
   .forEach((button) => {
     button.addEventListener('click', () => {
-      const productId = button.dataset.productId;
-      const valueOne = button.dataset.testId;
-      const quantityValue = document.querySelector(`.js-quantity-selector-${valueOne}`);
-      const finalValue = Number(quantityValue.value);
+      const { productId } = button.dataset;
 
+      const quantitySelector = document.querySelector(`.js-quantity-selector-${productId}`);
+      const quantity = Number(quantitySelector.value);
 
       let matchingItem;
 
@@ -74,11 +74,11 @@ document.querySelectorAll('.js-add-to-cart')
       })
         
       if (matchingItem) {
-        matchingItem.quantity + finalValue;
+        matchingItem.quantity += quantity;
       } else {
         cart.push({
           productId: productId,
-          quantity: finalValue
+          quantity: quantity
         })
       }
 
@@ -91,5 +91,14 @@ document.querySelectorAll('.js-add-to-cart')
       })
 
       document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
+
+      const addedMessage = document.querySelector(`.added-message-${productId}`)
+      addedMessage.classList.add('added-message');
+
+      setTimeout(() => {
+        addedMessage.classList.remove('added-message');
+      }, 2000)
     })
   })
+
+  
